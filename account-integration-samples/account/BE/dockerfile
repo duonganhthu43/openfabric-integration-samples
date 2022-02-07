@@ -1,0 +1,28 @@
+# Base image
+FROM node:16.0.0
+
+# Make folder to put our files in
+RUN mkdir -p /usr/src/account
+RUN mkdir -p /usr/src/account/BE
+RUN mkdir -p /usr/src/account/BE/src
+RUN mkdir -p /usr/src/account/BE/src/Steps
+
+# Set working directory so that all 
+# subsequent command runs in this folder
+WORKDIR /usr/src/account/BE
+
+# Copy package json and install dependencies
+COPY package*.json ./
+COPY *.js ./ 
+COPY src ./src
+COPY yarn.lock ./
+RUN yarn install
+
+# Copy our app
+COPY . .
+
+# Expose port to access server
+EXPOSE 3009
+
+# Command to run our app
+CMD [ "yarn", "start"]

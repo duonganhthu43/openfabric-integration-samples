@@ -1,0 +1,28 @@
+# Base image
+FROM node:16.0.0
+
+# Make folder to put our files in
+RUN mkdir -p /usr/src/merchant
+RUN mkdir -p /usr/src/merchant/BE
+RUN mkdir -p /usr/src/merchant/BE/src
+RUN mkdir -p /usr/src/merchant/BE/src/Steps
+
+# Set working directory so that all 
+# subsequent command runs in this folder
+WORKDIR /usr/src/merchant/BE
+
+# Copy package json and install dependencies
+COPY package*.json ./
+COPY *.js ./ 
+COPY src ./src
+COPY yarn.lock ./
+RUN yarn install
+
+# Copy our app
+COPY . .
+
+# Expose port to access server
+EXPOSE 3008
+
+# Command to run our app
+CMD [ "yarn", "start"]

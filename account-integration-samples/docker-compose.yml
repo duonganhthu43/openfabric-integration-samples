@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  merchant-fe-vanilla:
+    build: ./merchant/FE/vanilla
+    environment:
+      - MERCHANT_SERVER=http://localhost:3008
+      - ACCOUNT_SLUG=testsampledynamic
+    ports: 
+      - "3000:80"
+    container_name: merchant-fe-vanilla
+    restart: always
+    links:
+      - merchant-server
+  
+  merchant-server:
+    build: ./merchant/BE
+    environment:
+      - OPEN_FABRIC_OAUTH_ENDPOINT=https://auth.dev.openfabric.co/oauth2/token
+      - OPEN_FABRIC_API_ENDPOINT=https://api.dev.openfabric.co
+      - MERCHANT_CLIENT_ID=4oq4jmk1576tr4ritdt3vakg20
+      - MERCHANT_CLIENT_SECRECT=v6p1e66b0ti0qetq92e345rslgrouhapdgtfaqrlr427qrv7n2e
+      - PORT=3008
+    ports: 
+      - "3008:3008"
+    container_name: merchant-server
+    restart: always
+  
+  account-fe:
+    build: ./account/FE
+    environment:
+      - ACCOUNT_SERVER=http://localhost:3009
+    ports: 
+      - "3002:80"
+    container_name: account-fe
+    restart: always
+    links:
+      - account-server
+  
+  ngrok:
+    image: wernight/ngrok
+    ports:
+    - "4040:4040"
+    environment:
+      NGROK_PROTOCOL: https
+      NGROK_PORT: account-server:3009
+      NGROK_AUTH: 1QUmEI5PjMJt9RsEuCS7gMjGqKQ_3g7ohQqwuUPFKxXSyREQy
+    container_name: ngrok-account-server
+    depends_on:
+    - account-server
+  
+  account-server:
+    build: ./account/BE
+    environment:
+      - OPEN_FABRIC_OAUTH_ENDPOINT=https://auth.dev.openfabric.co/oauth2/token
+      - OPEN_FABRIC_API_ENDPOINT=https://api.dev.openfabric.co
+      - ACCOUNT_CLIENT_ID=6hnmkekiecp563hrltp9supolc
+      - ACCOUNT_CLIENT_SECRECT=sgb0r9d41o385ls870k6n3fjitmf1m23h13qut8e0hgh297sn4a
+      - ACCOUNT_FE_URL=http://localhost:3002
+      - PORT=3009
+    ports: 
+      - "3009:3009"
+    container_name: account-server
+    restart: always

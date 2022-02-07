@@ -1,4 +1,4 @@
-# OpenFabric - Account Integration Sample
+# OpenFabric - Auth Endpoint Sample
 
 1. Provide valid `clientId` and `clientSecret` in index.js
 
